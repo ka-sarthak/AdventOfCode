@@ -5,7 +5,6 @@ when the depth is increases.
 import numpy as np
 
 count = 0
-
 with open('data.txt','r') as fp:
 	d1 = fp.readline()
 	while True:
