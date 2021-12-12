@@ -3,11 +3,9 @@ Navigation of the submarine. To compute the final position using initial state =
 and input data of up, down, forward. Here the state represent (horizontal, depth, aim)
 with some complicated relation between commands and states - look on the website.
 '''
-
 import numpy as np
 
 initial_pos = np.array([0,0,0])
-
 with open('data.txt', 'r') as fp:
 	while True:
 		command = fp.readline().split()
@@ -24,4 +22,3 @@ with open('data.txt', 'r') as fp:
 			print(f"Invalid command! Can't process {command[0]}")
 print(f'Final position = {initial_pos}') 
 print('Product = ', initial_pos[0]*initial_pos[1])
-
