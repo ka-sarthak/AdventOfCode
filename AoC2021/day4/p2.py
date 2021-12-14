@@ -80,6 +80,14 @@ def win_sweep(board_arr):
     
     return win_ind
 
+def del_board(board_arr, idx):
+    del_idx = np.arange(idx*25, idx*25 + 25)
+    row1 = np.delete(board_arr[0,:], del_idx, axis= None)
+    row2 = row1.reshape((5,5)).T.flatten()
+    board_arr = np.vstack((row1,row2))
+
+    return board_arr
+
 ##########################################
 
 nums = getNumbers(filename)
@@ -89,7 +97,7 @@ for i in nums:
     boards = mark_sweep(boards,i)
     win_ind = win_sweep(boards)
     if win_ind < len(boards[0]):
-        break
+        boards = del_board(boards, win_ind)
 
 win_board = boards[0,win_ind*25:win_ind*25+25]
 
