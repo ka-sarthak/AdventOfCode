@@ -56,55 +56,61 @@ def mark_sweep(board_arr, num):
     
     return marked_arr
 
-def win_sweep(board_arr):
+def win_sweep(board_arr, win_list):
     '''
     sweeps for 5 consecutive markings on both rows
     '''
     winner = 0
-    win_ind = len(board_arr[0]+1)
-    for i in np.arange(0,len(board_arr[0]),5):
-        if np.all(board_arr[0,i:i+5] == -1):
-            winner = 1
-            win_ind = int(i/25)
-            break
-
-    if winner == 0:
-        for i in np.arange(0,len(board_arr[1]),5):
-            if np.all(board_arr[1,i:i+5] == -1):
-                winner = 1
-                win_ind = int(i/25)
+    for i in range(int(len(board_arr[0])/25)):
+        if i in win_list:
+            continue
+        for j in np.arange(i*25,(i+1)*25,5):
+            if np.all(board_arr[0,j:j+5] == -1):
+                win_list = np.append(win_list, i)
+                winner = 1 
                 break
-    
-    if winner == 1:
-        win_ind = int(i/25)
-    
-    return win_ind
 
-def del_board(board_arr, idx):
-    del_idx = np.arange(idx*25, idx*25 + 25)
-    row1 = np.delete(board_arr[0,:], del_idx, axis= None)
-    row2 = row1.reshape((5,5)).T.flatten()
-    board_arr = np.vstack((row1,row2))
+    for i in range(int(len(board_arr[1])/25)):
+        if i in win_list:
+            continue
+        for j in np.arange(i*25,(i+1)*25,5):
+            if np.all(board_arr[1,j:j+5] == -1):
+                win_list = np.append(win_list, i)
+                winner = 1 
+                break
 
-    return board_arr
+    return winner, win_list
 
 ##########################################
 
 nums = getNumbers(filename)
 boards = getBoards(filename)
+clean = boards
 
+win_list = np.array([])
 for i in nums:
     boards = mark_sweep(boards,i)
-    win_ind = win_sweep(boards)
-    if win_ind < len(boards[0]):
-        boards = del_board(boards, win_ind)
+    winner, win_list = win_sweep(boards,win_list)
+    if len(win_list) == 100:
+        break
+    if len(win_list)==1 and winner==1:          # for getting the first board completed
+        saved_state = boards
+        saved_i = i
 
-win_board = boards[0,win_ind*25:win_ind*25+25]
+''' Solution for problem 1: 
+    First one is the winner '''
+#i = int(saved_i)
+#win_idx = int(win_list[0])
+#win_board = saved_state[0,win_idx*25:win_idx*25+25]
 
-## Winner board and Score calculation
-win_board = boards[0,win_ind*25:win_ind*25+25]
+''' Solution for problem 2:
+    Last one is the winner  '''
+win_idx = int(win_list[-1])
+win_board = boards[0,win_idx*25:win_idx*25+25]
+
+## Score calculation
 score = i * np.sum(np.array([0 if i == -1 else i for i in win_board]))
 
-print(f"The board that wins is #{win_ind} with a score of {score}.")
-print(win_board.reshape((5,5)))
-
+print(f"The board that wins is #{win_idx} with a score of {score}.")
+print(f'Original Board #{win_idx}:\n', clean[0,win_idx*25:win_idx*25+25].reshape((5,5)))
+print(f'Marked Board #{win_idx} after drawing the last number {i}:\n', win_board.reshape((5,5)))
