@@ -97,4 +97,3 @@ score = i * np.sum(np.array([0 if i == -1 else i for i in win_board]))
 
 print(f"The board that wins is #{win_ind} with a score of {score}.")
 print(win_board.reshape((5,5)))
-print(i)
